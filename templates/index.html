@@ -1,23 +1,55 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SentiCare – Hoe voel je je?</title>
-    <link rel="stylesheet" href="/static/styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SentiCare – Hoe voel je je?</title>
+  <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>Hoe voel je je vandaag?</h1>
-        <div class="emoji-selector">
-            <button class="emoji">😄</button>
-            <button class="emoji">🙂</button>
-            <button class="emoji">😐</button>
-            <button class="emoji">😢</button>
-            <button class="emoji">😠</button>
-        </div>
-        <textarea placeholder="Ik voel me..."></textarea>
-        <button class="submit">Doorgaan</button>
+  <div class="container">
+    <h1>Hoe voel je je vandaag?</h1>
+    <div class="emoji-selector">
+      <button class="emoji" data-mood="blij">😄</button>
+      <button class="emoji" data-mood="oké">🙂</button>
+      <button class="emoji" data-mood="neutraal">😐</button>
+      <button class="emoji" data-mood="verdrietig">😢</button>
+      <button class="emoji" data-mood="boos">😠</button>
     </div>
+    <textarea id="user-feeling" placeholder="Ik voel me..."></textarea>
+    <button class="submit" id="go-button">Doorgaan</button>
+  </div>
+
+  <script>
+    let selectedMood = null;
+
+    document.querySelectorAll(".emoji").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectedMood = btn.dataset.mood;
+        document.querySelectorAll(".emoji").forEach(e => e.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+
+    document.getElementById("go-button").addEventListener("click", async () => {
+      const text = document.getElementById("user-feeling").value;
+      if (!selectedMood || !text.trim()) {
+        alert("Kies een emoji en beschrijf hoe je je voelt.");
+        return;
+      }
+
+      // Stuur mood op naar de backend
+      await fetch("/submit_mood", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ mood: selectedMood }),
+      });
+
+      // Ga naar de chatpagina
+      window.location.href = "/chat";
+    });
+  </script>
 </body>
 </html>
