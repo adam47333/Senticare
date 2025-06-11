@@ -1,1 +1,37 @@
-<!DOCTYPE html><html><head><title>Overzicht</title></head><body><h1>Stemmingsoverzicht</h1></body></html>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stemmingsgrafiek</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Overzicht van je gevoelens 📈</h2>
+    <canvas id="moodChart" width="400" height="200"></canvas>
+    <h3>Dagboeknotities</h3>
+    <ul>
+      {% for date, entry in moods.items() %}
+        <li><strong>{{ date }}</strong>: {{ entry.note }} ({{ entry.mood }})</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <script>
+    const ctx = document.getElementById("moodChart");
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: {{ moods.keys()|list|tojson }},
+        datasets: [{
+          label: "Stemming",
+          data: {{ moods.values()|map(attribute='mood')|list|tojson }},
+          borderColor: "#6C63FF",
+          backgroundColor: "rgba(108, 99, 255, 0.2)",
+          tension: 0.3
+        }]
+      }
+    });
+  </script>
+</body>
+</html>

@@ -44,7 +44,7 @@
       });
 
       const data = await response.json();
-      chatBox.lastChild.remove(); // verwijder "..."
+      chatBox.lastChild.remove();
       appendMessage("ai", data.reply || "Er ging iets mis...");
     });
   </script>

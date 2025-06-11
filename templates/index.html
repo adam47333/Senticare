@@ -10,11 +10,11 @@
   <div class="container">
     <h1>Hoe voel je je vandaag?</h1>
     <div class="emoji-selector">
-      <button class="emoji" data-mood="blij">😄</button>
-      <button class="emoji" data-mood="oké">🙂</button>
-      <button class="emoji" data-mood="neutraal">😐</button>
-      <button class="emoji" data-mood="verdrietig">😢</button>
-      <button class="emoji" data-mood="boos">😠</button>
+      <button class="emoji" data-mood="blij" data-color="#FFD166">😄</button>
+      <button class="emoji" data-mood="oké" data-color="#A3CEF1">🙂</button>
+      <button class="emoji" data-mood="neutraal" data-color="#f9f9fc">😐</button>
+      <button class="emoji" data-mood="verdrietig" data-color="#6C63FF">😢</button>
+      <button class="emoji" data-mood="boos" data-color="#FF6B6B">😠</button>
     </div>
     <textarea id="user-feeling" placeholder="Ik voel me..."></textarea>
     <button class="submit" id="go-button">Doorgaan</button>
@@ -22,10 +22,13 @@
 
   <script>
     let selectedMood = null;
+    let selectedColor = null;
 
     document.querySelectorAll(".emoji").forEach((btn) => {
       btn.addEventListener("click", () => {
         selectedMood = btn.dataset.mood;
+        selectedColor = btn.dataset.color;
+        document.body.style.backgroundColor = selectedColor;
         document.querySelectorAll(".emoji").forEach(e => e.classList.remove("active"));
         btn.classList.add("active");
       });
@@ -38,16 +41,13 @@
         return;
       }
 
-      // Stuur mood op naar de backend
+      const today = new Date().toISOString().split('T')[0];
       await fetch("/submit_mood", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ mood: selectedMood }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mood: selectedMood, note: text, date: today }),
       });
 
-      // Ga naar de chatpagina
       window.location.href = "/chat";
     });
   </script>
