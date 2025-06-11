@@ -1,15 +1,18 @@
-# Flask backend voor SentiCare
+# app.py – Veilige versie met poortbinding voor Render
 from flask import Flask, render_template, request, jsonify
 import openai
 import json
 import datetime
 import os
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+load_dotenv()  # ✅ Laad .env bestand
 
 app = Flask(__name__)
 CORS(app)
 
-openai.api_key = os.getenv("OPENAI_API_KEY", "sk-...")
+openai.api_key = os.getenv("OPENAI_API_KEY")  # ✅ Haal API key uit omgeving
 
 MOOD_FILE = "moods.json"
 
@@ -73,5 +76,7 @@ def ask_ai():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ✅ Correcte poortbinding voor Render
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
